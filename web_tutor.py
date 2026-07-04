@@ -79,8 +79,75 @@ CRITICAL FORMATTING CONSTRAINTS (NO CODE SYMBOLS):
 """
 
 # 8. User Interface Display Fields
-st.markdown(f'<p class="input-label">Ask your {selected_module} question or exam strategy objective:</p>', unsafe_allow_html=True)
-student_question = st.text_input("", placeholder=f"e.g., Ask a question about your uploaded {selected_module} books...", label_visibility="collapsed")
+st.markdown("""
+    <style>
+    /* Import modern typography */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    /* Apply clean typography layout to everything */
+    html, body, [class*="css"], .stApp {
+        font-family: 'Inter', sans-serif !important;
+        background-color: #f4f6f9 !important;
+    }
+    
+    /* Premium Aakash-style top card banner */
+    .main-header {
+        background-color: #ffffff;
+        border-top: 5px solid #0d47a1; /* Core Aakash Blue */
+        padding: 24px;
+        border-radius: 8px;
+        color: #1e293b;
+        text-align: left;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        border-left: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .main-header h1 {
+        margin: 0;
+        color: #0d47a1;
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+    .main-header p {
+        margin: 8px 0 0 0;
+        color: #64748b;
+        font-size: 1rem;
+    }
+    
+    /* Input form descriptor styling */
+    .input-label {
+        font-weight: 600;
+        color: #0f172a;
+        font-size: 1rem;
+        margin-bottom: 6px;
+    }
+    
+    /* Button Custom styling matching corporate test portals */
+    div.stButton > button:first-child {
+        background-color: #0d47a1 !important;
+        color: white !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        border: none !important;
+        padding: 12px 24px !important;
+        box-shadow: 0 2px 4px rgba(13, 71, 161, 0.2) !important;
+        transition: background-color 0.2s ease !important;
+    }
+    div.stButton > button:first-child:hover {
+        background-color: #002171 !important;
+    }
+    
+    /* Clean alert box replacements */
+    .stAlert {
+        border-radius: 6px !important;
+        border: 1px solid #e2e8f0 !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # 6. Web Input Interface
 student_question = st.text_input("What concept do you want me to explain today?", placeholder="Type your question here...")
