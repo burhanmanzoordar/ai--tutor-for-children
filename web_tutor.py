@@ -7,7 +7,7 @@ import glob
 # 1. Page Configuration
 st.set_page_config(page_title="AI Study Tutor", page_icon="🎓", layout="centered")
 
-# 🎨 2. Injecting Advanced Premium Portal Overrides (Aakash Accent Mode)
+# 🎨 2. Injecting Advanced Premium Portal Overrides (Aakash Accent Canvas Mode)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -18,7 +18,7 @@ st.markdown("""
         background-color: #f8fafc !important;
     }
     
-    /* Clean main page title design (Highly visible in both Light & Dark Mode settings) */
+    /* Clean main page title design */
     .portal-title {
         color: #0d47a1 !important;
         font-size: 2.2rem !important;
@@ -50,7 +50,7 @@ st.markdown("""
         border: 2px solid #0d47a1 !important;
         padding: 12px 10px !important;
         font-weight: 600 !important;
-        border-radius: 8px !important; /* Sleek curved boundary edges */
+        border-radius: 8px !important; 
         width: 100% !important;
         transition: all 0.2s ease-in-out !important;
     }
@@ -60,7 +60,7 @@ st.markdown("""
 
     /* Active Highlight Override styling for our horizontal tab controls */
     .active-tab-indicator {
-        background-color: #0d47a1 !important; /* Deep Blue Fill */
+        background-color: #0d47a1 !important; 
         color: white !important;
         padding: 14px;
         border-radius: 8px;
@@ -88,21 +88,29 @@ st.markdown("""
         background-color: #002171 !important;
     }
 
-    /* Clean, professional look for AI response callout blocks */
-    .stAlert {
-        border-radius: 8px !important;
-        border: 1px solid #bfdbfe !important; 
-        background-color: #eff6ff !important; 
-        color: #1e3a8a !important;
-        padding: 20px !important;
-        box-shadow: 0 2px 8px rgba(13, 71, 161, 0.03) !important;
+    /* Premium Canvas Explanation Frame Wrapper */
+    .canvas-card {
+        background-color: #ffffff !important;
+        border-left: 6px solid #0d47a1 !important;
+        padding: 30px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05) !important;
+        margin-top: 20px !important;
+        border-top: 1px solid #e2e8f0 !important;
+        border-right: 1px solid #e2e8f0 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+    
+    .canvas-title {
+        color: #0d47a1 !important;
+        font-size: 1.6rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 20px !important;
+        border-bottom: 2px solid #f1f5f9 !important;
+        padding-bottom: 10px !important;
     }
     </style>
     """, unsafe_allow_html=True)
-
-# 3. Clean Portal Branding Header Elements
-st.markdown('<h1 class="portal-title">🎓 Personal Learning Portal</h1>', unsafe_allow_html=True)
-st.markdown('<p class="portal-subtitle">Your Own AI tutor for explination and Exam Mode.</p>', unsafe_allow_html=True)
 
 # 4. Initialize Secrets-based AI client safely
 API_KEY = st.secrets["GEMINI_API_KEY"]
@@ -136,85 +144,111 @@ def load_module_pdfs(module_name):
             
     return combined_text
 
-# 6. Initialize App State Variables to handle Horizontal Button Clicks safely
+# 6. Initialize App View States for Dynamic Canvas Toggling
 if "active_subject" not in st.session_state:
     st.session_state["active_subject"] = "Science"
+if "view_mode" not in st.session_state:
+    st.session_state["view_mode"] = "portal"  # Options: 'portal' or 'canvas'
+if "saved_response" not in st.session_state:
+    st.session_state["saved_response"] = ""
+if "last_question" not in st.session_state:
+    st.session_state["last_question"] = ""
 
-st.markdown('<p class="field-heading">Select Subject Module:</p>', unsafe_allow_html=True)
-
-# Render the 4 subjects side-by-side as a horizontal row array grid layout
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    if st.button("🧪 Science", type="secondary", key="btn_sci"):
-        st.session_state["active_subject"] = "Science"
-with col2:
-    if st.button("🌍 Social Sci", type="secondary", key="btn_soc"):
-        st.session_state["active_subject"] = "Social Science"
-with col3:
-    if st.button("📐 Math", type="secondary", key="btn_mat"):
-        st.session_state["active_subject"] = "Math"
-with col4:
-    if st.button("📝 English", type="secondary", key="btn_eng"):
-        st.session_state["active_subject"] = "English"
-
-# Grab the currently active module click state selection
-selected_module = st.session_state["active_subject"]
-
-# Showcase a beautifully styled blue status capsule card tracker across the dashboard span grid
-st.markdown(f'<div class="active-tab-indicator">Active Course Matrix: {selected_module} Folder Channel Enabled</div>', unsafe_allow_html=True)
-
-# Synchronize backend processing loader channels to point to the folder selection mapping
-with st.spinner(f"Reading target {selected_module} books..."):
-    knowledge_base = load_module_pdfs(selected_module)
-
-# 7. Dynamic Instruction Mapping Block
-prompt_dictionary = {
-    "Science": """You are an expert Science tutor. Explain concepts clearly using precise definitions, everyday physical analogies, and crisp, double-spaced bullet points. If requested to show exam strategy, outline the response using clear headings: Definition, Core Scientific Facts, and Diagram Descriptions.""",
+# ==================== VIEW 1: DYNAMIC FULL CANVAS MODE ====================
+if st.session_state["view_mode"] == "canvas":
+    # Elegant, small secondary navigation back link button
+    if st.button("← Back to Question Portal", type="secondary"):
+        st.session_state["view_mode"] = "portal"
+        st.rerun()
+        
+    # Full-screen wide reading display canvas
+    st.markdown('<div class="canvas-card">', unsafe_allow_html=True)
+    st.markdown(f'<div class="canvas-title">📖 Explanation Canvas: {st.session_state["last_question"]}</div>', unsafe_allow_html=True)
     
-    "Social Science": """You are an expert History and Civics tutor. Break down complex events, causes, and chronological timelines into structured bullet points. Keep explanations direct and factual. For exams, highlight key dates, major historical impacts, and core arguments cleanly.""",
-    
-    "Math": """You are a precise Mathematics mentor. Focus on clear, step-by-step logical derivations. You MUST use standard text formatting or basic structural equations without raw markdown symbols. For exam strategy, explicitly break down your response into: Given Data, Formula to Apply, Step-by-Step Solution, and Final Answer Box.""",
-    
-    "English": """You are a creative and sharp English Language and Literature tutor. Explain grammar rules, context, and chapter themes elegantly. Avoid markdown symbols. Provide clear, bulleted breakdowns for character sketches, thematic notes, or structural writing formats for exams."""
-}
+    # Render the clear AI text nicely formatted inside the frame window
+    st.write(st.session_state["saved_response"])
+    st.markdown('</div>', unsafe_allow_html=True)
 
-tutor_instructions = f"""
-{prompt_dictionary[selected_module]}
+# ==================== VIEW 2: STANDARD INPUT PORTAL ====================
+else:
+    # 3. Clean Portal Branding Header Elements
+    st.markdown('<h1 class="portal-title">🎓 Personal Learning Portal</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="portal-subtitle">Your Own AI teacher and guide.</p>', unsafe_allow_html=True)
 
-CRITICAL FORMATTING CONSTRAINTS (NO CODE SYMBOLS):
-1. Do NOT use markdown symbols like asterisks (**), hashtags (#), or bullet dashes (-).
-2. To build cleanly spaced lists, start each new line using a standard number or clear dot character (e.g., "• Point text" or "1. Point text").
-3. Use double line breaks between points so it reads beautifully on smaller touch screens.
-4. Always conclude your interaction with a short, motivating sentence!
-"""
+    st.markdown('<p class="field-heading">Select Subject Module:</p>', unsafe_allow_html=True)
 
-# 8. Rendering User Query Input Form fields
-st.markdown(f'<p class="field-heading">What concept or exam problem from your {selected_module} books should we break down?</p>', unsafe_allow_html=True)
-student_question = st.text_input("", placeholder="Type topic query details here...", label_visibility="collapsed")
+    # Render the 4 subjects side-by-side as a horizontal row array grid layout
+    col1, col2, col3, col4 = st.columns(4)
 
-# 9. Complete Execution Engine Button Loop
-if st.button("Consult Tutor 🧠", type="primary", use_container_width=True):
-    if not student_question.strip():
-        st.warning("Please type a clear question or topic objective first!")
-    elif not knowledge_base:
-        st.error(f"No PDF files found inside your '{selected_module}' folder. Please upload your book chapters into that specific GitHub folder!")
-    else:
-        with st.spinner("Tutor is analyzing your textbook chapters..."):
-            full_prompt = f"Study Material/Book Text:\n{knowledge_base}\n\nStudent Question: {student_question}"
-            
-            try:
-                response = client.models.generate_content(
-                    model='gemini-2.5-flash',
-                    contents=full_prompt,
-                    config=types.GenerateContentConfig(
-                        system_instruction=tutor_instructions,
-                        temperature=0.7,
+    with col1:
+        if st.button("🧪 Science", type="secondary", key="btn_sci"):
+            st.session_state["active_subject"] = "Science"
+    with col2:
+        if st.button("🌍 Social Sci", type="secondary", key="btn_soc"):
+            st.session_state["active_subject"] = "Social Science"
+    with col3:
+        if st.button("📐 Math", type="secondary", key="btn_mat"):
+            st.session_state["active_subject"] = "Math"
+    with col4:
+        if st.button("📝 English", type="secondary", key="btn_eng"):
+            st.session_state["active_subject"] = "English"
+
+    selected_module = st.session_state["active_subject"]
+
+    # Showcase active module indicator row banner
+    st.markdown(f'<div class="active-tab-indicator">Active Course Matrix: {selected_module} Folder Channel Enabled</div>', unsafe_allow_html=True)
+
+    # Ingestion processor loader
+    with st.spinner(f"Reading target {selected_module} books..."):
+        knowledge_base = load_module_pdfs(selected_module)
+
+    # 7. Dynamic Instruction Mapping Block
+    prompt_dictionary = {
+        "Science": """You are an expert Science tutor. Explain concepts clearly using precise definitions, everyday physical analogies, and crisp, double-spaced bullet points. If requested to show exam strategy, outline the response using clear headings: Definition, Core Scientific Facts, and Diagram Descriptions.""",
+        "Social Science": """You are an expert History and Civics tutor. Break down complex events, causes, and chronological timelines into structured bullet points. Keep explanations direct and factual. For exams, highlight key dates, major historical impacts, and core arguments cleanly.""",
+        "Math": """You are a precise Mathematics mentor. Focus on clear, step-by-step logical derivations. You MUST use standard text formatting or basic structural equations without raw markdown symbols. For exam strategy, explicitly break down your response into: Given Data, Formula to Apply, Step-by-Step Solution, and Final Answer Box.""",
+        "English": """You are a creative and sharp English Language and Literature tutor. Explain grammar rules, context, and chapter themes elegantly. Avoid markdown symbols. Provide clear, bulleted breakdowns for character sketches, thematic notes, or structural writing formats for exams."""
+    }
+
+    tutor_instructions = f"""
+    {prompt_dictionary[selected_module]}
+
+    CRITICAL FORMATTING CONSTRAINTS (NO CODE SYMBOLS):
+    1. Do NOT use markdown symbols like asterisks (**), hashtags (#), or bullet dashes (-).
+    2. To build cleanly spaced lists, start each new line using a standard number or clear dot character (e.g., "• Point text" or "1. Point text").
+    3. Use double line breaks between points so it reads beautifully on smaller touch screens.
+    4. Always conclude your interaction with a short, motivating sentence!
+    """
+
+    # 8. Rendering User Query Input Form fields
+    st.markdown(f'<p class="field-heading">What concept or exam problem from your {selected_module} books should we break down?</p>', unsafe_allow_html=True)
+    student_question = st.text_input("", placeholder="Type topic query details here...", label_visibility="collapsed")
+
+    # 9. Complete Execution Engine Button Loop
+    if st.button("Consult Tutor 🧠", type="primary", use_container_width=True):
+        if not student_question.strip():
+            st.warning("Please type a clear question or topic objective first!")
+        elif not knowledge_base:
+            st.error(f"No PDF files found inside your '{selected_module}' folder. Please upload your book chapters into that specific GitHub folder!")
+        else:
+            with st.spinner("Tutor is analyzing your textbook chapters..."):
+                full_prompt = f"Study Material/Book Text:\n{knowledge_base}\n\nStudent Question: {student_question}"
+                
+                try:
+                    response = client.models.generate_content(
+                        model='gemini-2.5-flash',
+                        contents=full_prompt,
+                        config=types.GenerateContentConfig(
+                            system_instruction=tutor_instructions,
+                            temperature=0.7,
+                        )
                     )
-                )
-                
-                st.markdown("### 📖 Tutor Response Summary:")
-                st.info(response.text)
-                
-            except Exception as e:
-                st.error(f"Secure Connection Timeout Error: {e}")
+                    
+                    # Store variables into state cache and toggle layout view seamlessly
+                    st.session_state["saved_response"] = response.text
+                    st.session_state["last_question"] = student_question
+                    st.session_state["view_mode"] = "canvas"
+                    st.rerun()
+                    
+                except Exception as e:
+                    st.error(f"Secure Connection Timeout Error: {e}")
