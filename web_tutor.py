@@ -116,7 +116,8 @@ st.markdown("""
 API_KEY = st.secrets["GEMINI_API_KEY"]
 client = genai.Client(api_key=API_KEY)
 
-# 5. Upgraded Module-Specific PDF Scanning Engine
+# 5. Upgraded Module-Specific PDF Scanning Engine (With High-Speed Caching Decorator)
+@st.cache_data(show_spinner=False)
 def load_module_pdfs(module_name):
     combined_text = ""
     folder_map = {
@@ -148,7 +149,7 @@ def load_module_pdfs(module_name):
 if "active_subject" not in st.session_state:
     st.session_state["active_subject"] = "Science"
 if "view_mode" not in st.session_state:
-    st.session_state["view_mode"] = "portal"  # Options: 'portal' or 'canvas'
+    st.session_state["view_mode"] = "portal"  
 if "saved_response" not in st.session_state:
     st.session_state["saved_response"] = ""
 if "last_question" not in st.session_state:
@@ -156,28 +157,22 @@ if "last_question" not in st.session_state:
 
 # ==================== VIEW 1: DYNAMIC FULL CANVAS MODE ====================
 if st.session_state["view_mode"] == "canvas":
-    # Elegant, small secondary navigation back link button
     if st.button("← Back to Question Portal", type="secondary"):
         st.session_state["view_mode"] = "portal"
         st.rerun()
         
-    # Full-screen wide reading display canvas
     st.markdown('<div class="canvas-card">', unsafe_allow_html=True)
     st.markdown(f'<div class="canvas-title">📖 Explanation Canvas: {st.session_state["last_question"]}</div>', unsafe_allow_html=True)
-    
-    # Render the clear AI text nicely formatted inside the frame window
     st.write(st.session_state["saved_response"])
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ==================== VIEW 2: STANDARD INPUT PORTAL ====================
 else:
-    # 3. Clean Portal Branding Header Elements
     st.markdown('<h1 class="portal-title">🎓 Personal Learning Portal</h1>', unsafe_allow_html=True)
-    st.markdown('<p class="portal-subtitle">Your Own AI teacher and guide.</p>', unsafe_allow_html=True)
+    st.markdown('<p class="portal-subtitle">Premium direct textbook insights and structured exam blueprints.</p>', unsafe_allow_html=True)
 
     st.markdown('<p class="field-heading">Select Subject Module:</p>', unsafe_allow_html=True)
 
-    # Render the 4 subjects side-by-side as a horizontal row array grid layout
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
@@ -195,12 +190,10 @@ else:
 
     selected_module = st.session_state["active_subject"]
 
-    # Showcase active module indicator row banner
     st.markdown(f'<div class="active-tab-indicator">Active Course Matrix: {selected_module} Folder Channel Enabled</div>', unsafe_allow_html=True)
 
-    # Ingestion processor loader
-    with st.spinner(f"Reading target {selected_module} books..."):
-        knowledge_base = load_module_pdfs(selected_module)
+    # High-speed check: Fetch text context background channel instantly from application cache
+    knowledge_base = load_module_pdfs(selected_module)
 
     # 7. Dynamic Instruction Mapping Block
     prompt_dictionary = {
@@ -220,11 +213,10 @@ else:
     4. Always conclude your interaction with a short, motivating sentence!
     """
 
-    # 8. Rendering User Query Input Form fields
     st.markdown(f'<p class="field-heading">What concept or exam problem from your {selected_module} books should we break down?</p>', unsafe_allow_html=True)
     student_question = st.text_input("", placeholder="Type topic query details here...", label_visibility="collapsed")
 
-    # 9. Complete Execution Engine Button Loop
+    # 9. Optimized Speed-Engine Submit Execution
     if st.button("Consult Tutor 🧠", type="primary", use_container_width=True):
         if not student_question.strip():
             st.warning("Please type a clear question or topic objective first!")
@@ -244,7 +236,6 @@ else:
                         )
                     )
                     
-                    # Store variables into state cache and toggle layout view seamlessly
                     st.session_state["saved_response"] = response.text
                     st.session_state["last_question"] = student_question
                     st.session_state["view_mode"] = "canvas"
