@@ -9,9 +9,9 @@ st.set_page_config(page_title="AI Study Tutor", page_icon="📚", layout="center
 st.title("📚 Personal AI Study Tutor")
 st.write("Ask any question! The AI will search through your uploaded PDF books and notes.")
 
-# 2. Initialize AI client securely
-# Make sure to put your working API key here!
-API_KEY = "AIzaSyBaGsxJyJnG8PP35z0g37rrTs48OhE6RDk"
+# 2. Initialize AI client securely using Streamlit Secrets
+# This reads the key from a hidden vault instead of hardcoding it!
+API_KEY = st.secrets["GEMINI_API_KEY"]
 client = genai.Client(api_key=API_KEY)
 
 # 3. Function to scan and read ALL PDFs in the folder
