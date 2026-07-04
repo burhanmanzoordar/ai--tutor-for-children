@@ -11,7 +11,7 @@ st.write("Ask any question! The AI will search through your uploaded PDF books a
 
 # 2. Initialize AI client securely
 # Make sure to put your working API key here!
-API_KEY = "AIzaSyBaGsxJyJnG8PP35z0g37rrTs480hE6RDk"
+API_KEY = "AIzaSyBaGsxJyJnG8PP35z0g37rrTs48OhE6RDk"
 client = genai.Client(api_key=API_KEY)
 
 # 3. Function to scan and read ALL PDFs in the folder
