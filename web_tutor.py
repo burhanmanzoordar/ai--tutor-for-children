@@ -4,20 +4,113 @@ from google.genai import types
 from pypdf import PdfReader
 import glob
 
-# 1. Web Page Configuration
-st.set_page_config(page_title="AI Study Tutor", page_icon="📚", layout="centered")
-st.title("📚 Personal AI Study Tutor")
-st.write("Ask any question! The AI will search through your uploaded PDF books and notes.")
+# 1. Page Configuration
+st.set_page_config(page_title="AI Study Tutor", page_icon="🎓", layout="centered")
 
-# 2. Initialize AI client securely using Streamlit Secrets
-# This reads the key from a hidden vault instead of hardcoding it!
+# 🎨 2. Injecting Advanced Premium Portal Overrides (Aakash Accent Mode)
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    /* Global layout structural controls */
+    html, body, [class*="css"], .stApp {
+        font-family: 'Inter', sans-serif !important;
+        background-color: #f8fafc !important;
+    }
+    
+    /* Clean main page title design (Highly visible in both Light & Dark Mode settings) */
+    .portal-title {
+        color: #0d47a1 !important;
+        font-size: 2.2rem !important;
+        font-weight: 700 !important;
+        margin-bottom: 5px !important;
+        text-align: center;
+    }
+    .portal-subtitle {
+        color: #475569 !important;
+        font-size: 1.05rem !important;
+        margin-bottom: 30px !important;
+        text-align: center;
+        font-weight: 400;
+    }
+
+    /* Styled structural labels for input sections */
+    .field-heading {
+        color: #0f172a !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        margin-top: 25px !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* Force standard Streamlit secondary action buttons to render as the horizontal subject selector layout tabs */
+    div.stButton > button[kind="secondary"] {
+        background-color: #ffffff !important; 
+        color: #0d47a1 !important;
+        border: 2px solid #0d47a1 !important;
+        padding: 12px 10px !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important; /* Sleek curved boundary edges */
+        width: 100% !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    div.stButton > button[kind="secondary"]:hover {
+        background-color: #eff6ff !important;
+    }
+
+    /* Active Highlight Override styling for our horizontal tab controls */
+    .active-tab-indicator {
+        background-color: #0d47a1 !important; /* Deep Blue Fill */
+        color: white !important;
+        padding: 14px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 25px;
+        margin-top: 15px;
+        box-shadow: 0 4px 12px rgba(13, 71, 161, 0.15);
+    }
+
+    /* Custom Primary Submit Action Button configuration */
+    button[kind="primary"] {
+        background-color: #0d47a1 !important;
+        color: white !important;
+        font-weight: 600 !important;
+        font-size: 1.1rem !important;
+        border-radius: 8px !important;
+        border: none !important;
+        padding: 15px 20px !important;
+        width: 100% !important;
+        box-shadow: 0 4px 14px rgba(13, 71, 161, 0.25) !important;
+        margin-top: 20px !important;
+    }
+    button[kind="primary"]:hover {
+        background-color: #002171 !important;
+    }
+
+    /* Clean, professional look for AI response callout blocks */
+    .stAlert {
+        border-radius: 8px !important;
+        border: 1px solid #bfdbfe !important; 
+        background-color: #eff6ff !important; 
+        color: #1e3a8a !important;
+        padding: 20px !important;
+        box-shadow: 0 2px 8px rgba(13, 71, 161, 0.03) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# 3. Clean Portal Branding Header Elements
+st.markdown('<h1 class="portal-title">🎓 Personal Learning Portal</h1>', unsafe_allow_html=True)
+st.markdown('<p class="portal-subtitle">Premium direct textbook insights and structured exam blueprints.</p>', unsafe_allow_html=True)
+
+# 4. Initialize Secrets-based AI client safely
 API_KEY = st.secrets["GEMINI_API_KEY"]
 client = genai.Client(api_key=API_KEY)
 
 # 5. Upgraded Module-Specific PDF Scanning Engine
 def load_module_pdfs(module_name):
     combined_text = ""
-    # Map selection to specific workspace directory folders
     folder_map = {
         "Science": "science_books/*.pdf",
         "Social Science": "social_science_books/*.pdf",
@@ -43,17 +136,36 @@ def load_module_pdfs(module_name):
             
     return combined_text
 
-# 6. Sidebar Navigation Module Selector
-with st.sidebar:
-    st.markdown("### 📚 Learning Dashboard")
-    selected_module = st.radio(
-        "Select your Subject Module:",
-        ["Science", "Social Science", "Math", "English"]
-    )
-    st.info(f"Active Module: {selected_module}")
+# 6. Initialize App State Variables to handle Horizontal Button Clicks safely
+if "active_subject" not in st.session_state:
+    st.session_state["active_subject"] = "Science"
 
-# Synchronize textbook context data layers based on folder selection
-with st.spinner(f"Loading {selected_module} reference materials..."):
+st.markdown('<p class="field-heading">Select Subject Module:</p>', unsafe_allow_html=True)
+
+# Render the 4 subjects side-by-side as a horizontal row array grid layout
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    if st.button("🧪 Science", type="secondary", key="btn_sci"):
+        st.session_state["active_subject"] = "Science"
+with col2:
+    if st.button("🌍 Social Sci", type="secondary", key="btn_soc"):
+        st.session_state["active_subject"] = "Social Science"
+with col3:
+    if st.button("📐 Math", type="secondary", key="btn_mat"):
+        st.session_state["active_subject"] = "Math"
+with col4:
+    if st.button("📝 English", type="secondary", key="btn_eng"):
+        st.session_state["active_subject"] = "English"
+
+# Grab the currently active module click state selection
+selected_module = st.session_state["active_subject"]
+
+# Showcase a beautifully styled blue status capsule card tracker across the dashboard span grid
+st.markdown(f'<div class="active-tab-indicator">Active Course Matrix: {selected_module} Folder Channel Enabled</div>', unsafe_allow_html=True)
+
+# Synchronize backend processing loader channels to point to the folder selection mapping
+with st.spinner(f"Reading target {selected_module} books..."):
     knowledge_base = load_module_pdfs(selected_module)
 
 # 7. Dynamic Instruction Mapping Block
@@ -67,7 +179,6 @@ prompt_dictionary = {
     "English": """You are a creative and sharp English Language and Literature tutor. Explain grammar rules, context, and chapter themes elegantly. Avoid markdown symbols. Provide clear, bulleted breakdowns for character sketches, thematic notes, or structural writing formats for exams."""
 }
 
-# Combine the core persona with your formatting constraints
 tutor_instructions = f"""
 {prompt_dictionary[selected_module]}
 
@@ -78,117 +189,18 @@ CRITICAL FORMATTING CONSTRAINTS (NO CODE SYMBOLS):
 4. Always conclude your interaction with a short, motivating sentence!
 """
 
-# 8. User Interface Display Fields
-st.markdown("""
-    <style>
-    /* Import clear, modern corporate dashboard font */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-    
-    /* FORCE global font application and page alignment */
-    html, body, [class*="css"], .stApp, p, span, label {
-        font-family: 'Inter', sans-serif !important;
-    }
-    
-    /* Re-skin the main app workspace background */
-    .stApp {
-        background-color: #f8fafc !important;
-    }
+# 8. Rendering User Query Input Form fields
+st.markdown(f'<p class="field-heading">What concept or exam problem from your {selected_module} books should we break down?</p>', unsafe_allow_html=True)
+student_question = st.text_input("", placeholder="Type topic query details here...", label_visibility="collapsed")
 
-    /* Target the main container to look like an isolated dashboard card */
-    .block-container {
-        background: #ffffff !important;
-        padding: 40px !important;
-        border-radius: 12px !important;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
-        border: 1px solid #e2e8f0 !important;
-        margin-top: 30px !important;
-    }
-    
-    /* Premium Aakash-style layout top brand header banner */
-    .main-header {
-        background-color: #ffffff !important;
-        border-top: 6px solid #0d47a1 !important; /* Vivid Aakash Blue Accent Line */
-        padding: 25px !important;
-        border-radius: 8px !important;
-        margin-bottom: 30px !important;
-        border-left: 1px solid #e2e8f0 !important;
-        border-right: 1px solid #e2e8f0 !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        box-shadow: 0 2px 10px rgba(13, 71, 161, 0.05) !important;
-    }
-    .main-header h1 {
-        margin: 0 !important;
-        color: #0d47a1 !important; /* Corporate Accent Blue */
-        font-size: 1.9rem !important;
-        font-weight: 700 !important;
-    }
-    .main-header p {
-        margin: 10px 0 0 0 !important;
-        color: #475569 !important;
-        font-size: 1rem !important;
-        font-weight: 400 !important;
-    }
-    
-    /* Bold, clean input card title indicators */
-    .input-label {
-        font-weight: 600 !important;
-        color: #0f172a !important;
-        font-size: 1.05rem !important;
-        margin-bottom: 10px !important;
-        margin-top: 15px !important;
-    }
-    
-    /* FORCE Streamlit's primary button to take corporate style rules */
-    button[kind="primary"] {
-        background-color: #0d47a1 !important; /* Main Blue Accent */
-        color: white !important;
-        font-weight: 600 !important;
-        font-size: 1.05rem !important;
-        border-radius: 6px !important;
-        border: none !important;
-        padding: 14px 20px !important;
-        width: 100% !important; /* Spans full horizontal container length */
-        box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2) !important;
-        transition: all 0.2s ease-in-out !important;
-    }
-    button[kind="primary"]:hover {
-        background-color: #002171 !important; /* Darker navy accent hover state */
-        box-shadow: 0 6px 16px rgba(0, 33, 113, 0.3) !important;
-        transform: translateY(-1px);
-    }
-    
-    /* Clean, professional look for AI response callout blocks */
-    .stAlert {
-        border-radius: 8px !important;
-        border: 1px solid #bfdbfe !important; /* Soft blue border frame */
-        background-color: #eff6ff !important; /* Ultra-light blue background focus tint */
-        color: #1e3a8a !important;
-        padding: 20px !important;
-        box-shadow: 0 2px 8px rgba(13, 71, 161, 0.03) !important;
-    }
-    
-    /* Styling for the left-side panel sidebar elements */
-    [data-testid="stSidebar"] {
-        background-color: #0f172a !important; /* Dark charcoal sidebar panel */
-        color: white !important;
-    }
-    [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label, [data-testid="stSidebar"] p {
-        color: white !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# 6. Web Input Interface
-student_question = st.text_input("What concept do you want me to explain today?", placeholder="Type your question here...")
-
-# 7. Execution Button
-if st.button("Ask Tutor", type="primary"):
+# 9. Complete Execution Engine Button Loop
+if st.button("Consult Tutor 🧠", type="primary", use_container_width=True):
     if not student_question.strip():
-        st.warning("Please type a question first!")
+        st.warning("Please type a clear question or topic objective first!")
     elif not knowledge_base:
-        st.error("No PDF files found! Please drop your book or notes PDFs into the folder.")
+        st.error(f"No PDF files found inside your '{selected_module}' folder. Please upload your book chapters into that specific GitHub folder!")
     else:
-        with st.spinner("Tutor is reading the materials and thinking... 🧠"):
+        with st.spinner("Tutor is analyzing your textbook chapters..."):
             full_prompt = f"Study Material/Book Text:\n{knowledge_base}\n\nStudent Question: {student_question}"
             
             try:
@@ -201,9 +213,8 @@ if st.button("Ask Tutor", type="primary"):
                     )
                 )
                 
-                # Render beautifully as a clean informational box on the phone screen
-                st.markdown("### 📖 Explanation:")
+                st.markdown("### 📖 Tutor Response Summary:")
                 st.info(response.text)
                 
             except Exception as e:
-                st.error(f"Connection Error: {e}")
+                st.error(f"Secure Connection Timeout Error: {e}")
