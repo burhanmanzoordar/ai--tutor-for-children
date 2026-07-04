@@ -81,70 +81,99 @@ CRITICAL FORMATTING CONSTRAINTS (NO CODE SYMBOLS):
 # 8. User Interface Display Fields
 st.markdown("""
     <style>
-    /* Import modern typography */
+    /* Import clear, modern corporate dashboard font */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
-    /* Apply clean typography layout to everything */
-    html, body, [class*="css"], .stApp {
+    /* FORCE global font application and page alignment */
+    html, body, [class*="css"], .stApp, p, span, label {
         font-family: 'Inter', sans-serif !important;
-        background-color: #f4f6f9 !important;
     }
     
-    /* Premium Aakash-style top card banner */
+    /* Re-skin the main app workspace background */
+    .stApp {
+        background-color: #f8fafc !important;
+    }
+
+    /* Target the main container to look like an isolated dashboard card */
+    .block-container {
+        background: #ffffff !important;
+        padding: 40px !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+        border: 1px solid #e2e8f0 !important;
+        margin-top: 30px !important;
+    }
+    
+    /* Premium Aakash-style layout top brand header banner */
     .main-header {
-        background-color: #ffffff;
-        border-top: 5px solid #0d47a1; /* Core Aakash Blue */
-        padding: 24px;
-        border-radius: 8px;
-        color: #1e293b;
-        text-align: left;
-        margin-bottom: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        border-left: 1px solid #e2e8f0;
-        border-right: 1px solid #e2e8f0;
-        border-bottom: 1px solid #e2e8f0;
+        background-color: #ffffff !important;
+        border-top: 6px solid #0d47a1 !important; /* Vivid Aakash Blue Accent Line */
+        padding: 25px !important;
+        border-radius: 8px !important;
+        margin-bottom: 30px !important;
+        border-left: 1px solid #e2e8f0 !important;
+        border-right: 1px solid #e2e8f0 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        box-shadow: 0 2px 10px rgba(13, 71, 161, 0.05) !important;
     }
     .main-header h1 {
-        margin: 0;
-        color: #0d47a1;
-        font-size: 1.8rem;
-        font-weight: 700;
+        margin: 0 !important;
+        color: #0d47a1 !important; /* Corporate Accent Blue */
+        font-size: 1.9rem !important;
+        font-weight: 700 !important;
     }
     .main-header p {
-        margin: 8px 0 0 0;
-        color: #64748b;
-        font-size: 1rem;
+        margin: 10px 0 0 0 !important;
+        color: #475569 !important;
+        font-size: 1rem !important;
+        font-weight: 400 !important;
     }
     
-    /* Input form descriptor styling */
+    /* Bold, clean input card title indicators */
     .input-label {
-        font-weight: 600;
-        color: #0f172a;
-        font-size: 1rem;
-        margin-bottom: 6px;
+        font-weight: 600 !important;
+        color: #0f172a !important;
+        font-size: 1.05rem !important;
+        margin-bottom: 10px !important;
+        margin-top: 15px !important;
     }
     
-    /* Button Custom styling matching corporate test portals */
-    div.stButton > button:first-child {
-        background-color: #0d47a1 !important;
+    /* FORCE Streamlit's primary button to take corporate style rules */
+    button[kind="primary"] {
+        background-color: #0d47a1 !important; /* Main Blue Accent */
         color: white !important;
         font-weight: 600 !important;
+        font-size: 1.05rem !important;
         border-radius: 6px !important;
         border: none !important;
-        padding: 12px 24px !important;
-        box-shadow: 0 2px 4px rgba(13, 71, 161, 0.2) !important;
-        transition: background-color 0.2s ease !important;
+        padding: 14px 20px !important;
+        width: 100% !important; /* Spans full horizontal container length */
+        box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2) !important;
+        transition: all 0.2s ease-in-out !important;
     }
-    div.stButton > button:first-child:hover {
-        background-color: #002171 !important;
+    button[kind="primary"]:hover {
+        background-color: #002171 !important; /* Darker navy accent hover state */
+        box-shadow: 0 6px 16px rgba(0, 33, 113, 0.3) !important;
+        transform: translateY(-1px);
     }
     
-    /* Clean alert box replacements */
+    /* Clean, professional look for AI response callout blocks */
     .stAlert {
-        border-radius: 6px !important;
-        border: 1px solid #e2e8f0 !important;
-        background-color: #ffffff !important;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.04) !important;
+        border-radius: 8px !important;
+        border: 1px solid #bfdbfe !important; /* Soft blue border frame */
+        background-color: #eff6ff !important; /* Ultra-light blue background focus tint */
+        color: #1e3a8a !important;
+        padding: 20px !important;
+        box-shadow: 0 2px 8px rgba(13, 71, 161, 0.03) !important;
+    }
+    
+    /* Styling for the left-side panel sidebar elements */
+    [data-testid="stSidebar"] {
+        background-color: #0f172a !important; /* Dark charcoal sidebar panel */
+        color: white !important;
+    }
+    [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label, [data-testid="stSidebar"] p {
+        color: white !important;
     }
     </style>
     """, unsafe_allow_html=True)
