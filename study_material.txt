@@ -1,0 +1,15 @@
+Photosynthesis is the biological process by which plants, algae, and some bacteria convert sunlight, water, and carbon dioxide into oxygen and energy-rich sugars. 
+It serves as the primary energy foundation for nearly all life on Earth and is responsible for producing the oxygen we breathe.
+The Chemical ProcessAt its core, photosynthesis transforms light energy into chemical energy. 
+The overall balanced chemical equation is:
+    6CO₂ + 6H₂O + Light Energy → C₆H₁₂O₆ + 6O₂Reactants: 
+    Six carbon dioxide molecules (CO₂) from the air and six water molecules (H₂O) absorbed by the roots.
+    Products: One molecule of glucose (C₆H₁₂O₆), which the organism uses for food and growth, and six molecules of oxygen (O₂), which are released into the atmosphere as a byproduct.
+The Two Main StagesIn plants, this process occurs in the chloroplasts using a green pigment called chlorophyll, which captures the sunlight. 
+It is divided into two distinct phases:Light-Dependent Reactions: 
+    These take place in the thylakoid membranes of the chloroplast. 
+    Sunlight splits water molecules into oxygen, protons, and electrons. 
+    This captures the light energy and converts it into usable cellular energy (ATP and NADPH).
+    Light-Independent Reactions (The Calvin Cycle): 
+        These occur in the stroma (fluid) of the chloroplast and do not directly require light. 
+        They use the ATP and NADPH generated in the first stage to convert carbon dioxide into sugars.
