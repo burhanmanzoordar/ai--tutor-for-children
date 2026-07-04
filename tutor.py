@@ -9,15 +9,24 @@ st.set_page_config(page_title="AI Study Tutor", page_icon="📚", layout="center
 st.title("📚 Personal AI Study Tutor")
 st.write("Ask any question! The AI will search through your uploaded PDF books and notes.")
 
-# 2. Initialize AI client securely
-# Make sure to put your working API key here!
-API_KEY = "AIzaSyBaGsxJyJnG8PP35z0g37rrTs48OhE6RDk"
+# 2. Initialize AI client securely using Streamlit Secrets
+# This reads the key from a hidden vault instead of hardcoding it!
+API_KEY = st.secrets["GEMINI_API_KEY"]
 client = genai.Client(api_key=API_KEY)
 
-# 3. Function to scan and read ALL PDFs in the folder
-def load_all_pdf_materials():
+# 5. Upgraded Module-Specific PDF Scanning Engine
+def load_module_pdfs(module_name):
     combined_text = ""
-    pdf_files = glob.glob("*.pdf")
+    # Map selection to specific workspace directory folders
+    folder_map = {
+        "Science": "science_books/*.pdf",
+        "Social Science": "social_science_books/*.pdf",
+        "Math": "math_books/*.pdf",
+        "English": "english_books/*.pdf"
+    }
+    
+    search_path = folder_map.get(module_name, "*.pdf")
+    pdf_files = glob.glob(search_path)
     
     if not pdf_files:
         return None
@@ -29,26 +38,49 @@ def load_all_pdf_materials():
                 text = page.extract_text()
                 if text:
                     combined_text += text + "\n"
-        except Exception as e:
-            st.error(f"Error reading file {pdf_file}: {e}")
+        except Exception:
+            pass
             
     return combined_text
 
-# 4. Automatically load the combined data behind the scenes
-with st.spinner("Scanning your study folder for books and notes..."):
-    knowledge_base = load_all_pdf_materials()
+# 6. Sidebar Navigation Module Selector
+with st.sidebar:
+    st.markdown("### 📚 Learning Dashboard")
+    selected_module = st.radio(
+        "Select your Subject Module:",
+        ["Science", "Social Science", "Math", "English"]
+    )
+    st.info(f"Active Module: {selected_module}")
 
-# 5. Clean, Conversational AI Persona (No coding text, no asterisks)
-tutor_instructions = """
-You are a patient, encouraging, and friendly personal tutor for an 8th-grade student. 
-Your job is to explain concepts clearly using simple words and a natural, conversational tone.
+# Synchronize textbook context data layers based on folder selection
+with st.spinner(f"Loading {selected_module} reference materials..."):
+    knowledge_base = load_module_pdfs(selected_module)
 
-CRITICAL FORMATTING RULES:
-1. Do NOT use markdown symbols like asterisks (**), hashtags (#), or bullet dashes (-). 
-2. Use simple line breaks (empty spaces between paragraphs) to separate your ideas cleanly.
-3. Always encourage the student at the end of your explanation!
-4. write your explination in bullets and points rather it being a summery or essay 
+# 7. Dynamic Instruction Mapping Block
+prompt_dictionary = {
+    "Science": """You are an expert Science tutor. Explain concepts clearly using precise definitions, everyday physical analogies, and crisp, double-spaced bullet points. If requested to show exam strategy, outline the response using clear headings: Definition, Core Scientific Facts, and Diagram Descriptions.""",
+    
+    "Social Science": """You are an expert History and Civics tutor. Break down complex events, causes, and chronological timelines into structured bullet points. Keep explanations direct and factual. For exams, highlight key dates, major historical impacts, and core arguments cleanly.""",
+    
+    "Math": """You are a precise Mathematics mentor. Focus on clear, step-by-step logical derivations. You MUST use standard text formatting or basic structural equations without raw markdown symbols. For exam strategy, explicitly break down your response into: Given Data, Formula to Apply, Step-by-Step Solution, and Final Answer Box.""",
+    
+    "English": """You are a creative and sharp English Language and Literature tutor. Explain grammar rules, context, and chapter themes elegantly. Avoid markdown symbols. Provide clear, bulleted breakdowns for character sketches, thematic notes, or structural writing formats for exams."""
+}
+
+# Combine the core persona with your formatting constraints
+tutor_instructions = f"""
+{prompt_dictionary[selected_module]}
+
+CRITICAL FORMATTING CONSTRAINTS (NO CODE SYMBOLS):
+1. Do NOT use markdown symbols like asterisks (**), hashtags (#), or bullet dashes (-).
+2. To build cleanly spaced lists, start each new line using a standard number or clear dot character (e.g., "• Point text" or "1. Point text").
+3. Use double line breaks between points so it reads beautifully on smaller touch screens.
+4. Always conclude your interaction with a short, motivating sentence!
 """
+
+# 8. User Interface Display Fields
+st.markdown(f'<p class="input-label">Ask your {selected_module} question or exam strategy objective:</p>', unsafe_allow_html=True)
+student_question = st.text_input("", placeholder=f"e.g., Ask a question about your uploaded {selected_module} books...", label_visibility="collapsed")
 
 # 6. Web Input Interface
 student_question = st.text_input("What concept do you want me to explain today?", placeholder="Type your question here...")
