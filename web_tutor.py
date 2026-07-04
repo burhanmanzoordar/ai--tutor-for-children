@@ -102,7 +102,7 @@ st.markdown("""
 
 # 3. Clean Portal Branding Header Elements
 st.markdown('<h1 class="portal-title">🎓 Personal Learning Portal</h1>', unsafe_allow_html=True)
-st.markdown('<p class="portal-subtitle">Premium direct textbook insights and structured exam blueprints.</p>', unsafe_allow_html=True)
+st.markdown('<p class="portal-subtitle">Your Own AI tutor for explination and Exam Mode.</p>', unsafe_allow_html=True)
 
 # 4. Initialize Secrets-based AI client safely
 API_KEY = st.secrets["GEMINI_API_KEY"]
